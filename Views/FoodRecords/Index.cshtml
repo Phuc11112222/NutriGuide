@@ -1,0 +1,275 @@
+﻿@model IEnumerable<NutriGuide.Models.FoodRecord>
+
+@{
+    ViewData["Title"] = "Index"; Layout = "_ContLayout";
+}
+
+<h1>Quản lý thực phẩm</h1>
+
+<p>
+    <a asp-action="Create">Thêm mới</a>
+</p>
+<table class="table dataTable" id="FoodRecords">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FoodName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GlycemicIndex)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateConsumed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FoodName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GlycemicIndex)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateConsumed)
+            </td>
+
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        const dataTable = new simpleDatatables.DataTable("#FoodRecords", {
+            perPageSelect: [5, 10, 15, ["All", -1]],
+            searchable: true,
+            fixedHeight: true,
+
+        });
+    </script>
+}
+<h2>Bạn muốn có thực đơn thức ăn 1 ngày dành riêng cho mình? Hãy nhập vào đây!</h2>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Dinh Dưỡng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .chatbox {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+
+        .input-group {
+            display: flex;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .user-msg {
+            color: blue;
+        }
+
+        .bot-msg {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chatbot Dinh Dưỡng - Tiểu đường & Huyết áp</h2>
+    <div class="chatbox">
+        <div class="messages" id="chat"></div>
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="Nhập thông tin của bạn...">
+            <button id="sendBtn">Gửi</button>
+        </div>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chat');
+        let menuCount = 0;
+
+        function appendMessage(sender, text) {
+          const div = document.createElement('div');
+          div.innerHTML = `<strong class="${sender}-msg">${sender === 'bot' ? '🤖' : '👤'}:</strong> ${text}`;
+          chat.appendChild(div);
+          chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendMessage() {
+          const input = document.getElementById('userInput');
+          const text = input.value.trim();
+          if (!text) return;
+          appendMessage('user', text);
+          input.value = '';
+          setTimeout(() => botReply(text), 500);
+        }
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') sendMessage();
+        });
+
+        function generateMealPlan() {
+          const meals = [
+            `<b>Bữa sáng:</b><br>
+            - Cháo yến mạch + sữa hạt không đường<br>
+            - 1 quả trứng luộc<br>
+            - 1 lát bánh mì nguyên cám<br>
+            <i>Nước uống:</i> Trà xanh hoặc nước lọc ấm<br><br>
+            <b>Bữa trưa:</b><br>
+            - Cơm gạo lứt<br>
+            - Cá hồi hấp<br>
+            - Rau xanh luộc<br>
+            - Canh rau củ ít muối<br>
+            <i>Nước uống:</i> Nước ép cần tây không đường<br><br>
+            <b>Bữa tối:</b><br>
+            - Cháo đậu xanh + ức gà luộc<br>
+            - Salad dưa leo + cà chua + dầu ô liu<br>
+            <b>Bữa nhẹ:</b> 1 quả táo nhỏ hoặc hạnh nhân không muối<br><br>`,
+
+            `<b>Bữa sáng:</b><br>
+            - Phở gạo lứt nấu rau củ<br>
+            - Trứng chần<br>
+            - 1 quả chuối nhỏ<br>
+            <i>Nước uống:</i> Nước chanh ấm không đường<br><br>
+            <b>Bữa trưa:</b><br>
+            - Miến dong nấu nấm, đậu phụ<br>
+            - Canh bầu nấu tôm<br>
+            - Rau luộc<br>
+            <i>Nước uống:</i> Trà atiso<br><br>
+            <b>Bữa tối:</b><br>
+            - Cơm gạo lứt + thịt ức gà nướng<br>
+            - Súp lơ hấp + dầu oliu<br>
+            <b>Bữa nhẹ:</b> Hạt chia ngâm sữa hạt<br><br>`,
+
+            `<b>Bữa sáng:</b><br>
+            - Xôi đậu đen ít muối<br>
+            - Đĩa rau salad<br>
+            - 1 quả cam nhỏ<br>
+            <i>Nước uống:</i> Trà xanh ấm không đường<br><br>
+            <b>Bữa trưa:</b><br>
+            - Canh hẹ nấu đậu hũ<br>
+            - Cá basa hấp<br>
+            - Cơm gạo lứt<br>
+            <i>Nước uống:</i> Trà thảo mộc<br><br>
+            <b>Bữa tối:</b><br>
+            - Cải thìa xào tỏi<br>
+            - Gỏi cuốn chay<br>
+            - Rau củ hấp<br>
+            <i>Nước uống:</i> Sữa hạt<br>
+            <b>Bữa nhẹ:</b> Sữa chua không đường + đậu phộng<br><br>`,
+
+            `<b>Bữa sáng:</b><br>
+          - Cháo đậu xanh + rau thì là + cam nhỏ<br>
+          <i>Nước uống:</i> Trà thảo mộc hoặc nước ấm<br><br>
+          <b>Bữa trưa:</b><br>
+          - Đậu phụ hấp nấm + bầu luộc + mè rang + cơm lứt<br>
+          <i>Nước uống:</i> Nước lọc hoặc trà râu ngô<br><br>
+          <b>Bữa tối:</b><br>
+          - Đậu phụ hấp nấm + rau muống luộc + nước ép cần tây<br><br>
+          <b>Bữa nhẹ:</b> Quả bơ nghiền<br><br>`,
+
+            `<b>Bữa sáng:</b><br>
+          - Bánh mì nguyên cám + bơ đậu phộng ít muối<br>
+          - 1 quả lê nhỏ<br>
+          - <i>Nước uống:</i> Trà hoa cúc<br><br>
+          <b>Bữa trưa:</b><br>
+          - Cơm nâu + đậu hũ sốt cà chua<br>
+          - Canh rau dền tôm<br>
+          - Dưa leo trộn giấm<br>
+          - <i>Nước uống:</i> Nước lọc hoặc trà râu ngô<br><br>
+          <b>Bữa tối:</b><br>
+          - Cháo yến mạch + rau củ<br>
+          - Trứng hấp + cải xanh<br><br>
+          <b>Bữa nhẹ:</b> Yaourt không đường hoặc 1 quả kiwi<br><br>`
+          ];
+          const response = meals[menuCount % meals.length];
+          menuCount++;
+          return response;
+        }
+
+        function botReply(message) {
+          const lower = message.toLowerCase();
+          const keywords = [
+            "thực đơn",
+            "lập kế hoạch ăn uống",
+            "gợi ý món ăn",
+            "ăn gì",
+            "làm lại",
+            "lập thêm",
+            "không được",
+            "chán",
+            "đổi",
+            "khác",
+            "thực đơn bữa ăn",
+            "lập kế hoạch bữa ăn",
+            "lập kế hoạch thực đơn ăn uống",
+            "thực đơn thức ăn",
+            "lập bữa ăn dinh dưỡng",
+            "lập thực đơn dinh dưỡng"
+          ];
+
+          if (keywords.some(k => lower.includes(k))) {
+            const mealPlan = generateMealPlan();
+            appendMessage('bot', `Dưới đây là thực đơn dinh dưỡng phù hợp cho người tiểu đường và cao huyết áp:<br><br>${mealPlan}`);
+          } else {
+            appendMessage('bot', 'Tôi chưa hiểu rõ. Bạn có thể hỏi về thực đơn, gợi ý ăn uống,... để tôi hỗ trợ nhé!');
+          }
+        }
+    </script>
+</body>
+</html>
+
